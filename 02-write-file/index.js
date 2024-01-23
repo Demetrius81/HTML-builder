@@ -6,25 +6,22 @@ const startMsg = 'Hello. Enter text >';
 const endMsg = 'Goodbye.';
 
 stdout.write(startMsg);
+fs.writeFile(path.resolve(__dirname, fileName), '', (err) => {
+  if (err) {
+    process.exit(err.code);
+  }
+});
 stdin.on('data', (data) => {
-  if (data.toString() !== '\r\n') {
-    if (data.toString() !== 'exit\r\n') {
-      console.log('working wrong');
-      fs.writeFile(path.resolve(__dirname, fileName), data, (err) => {
-        if (err) {
-          stdout.write(err + '\n');
-          process.exit(-1);
-        } else {
-          stdout.write('File written successfully\n');
-          process.exit(0);
-        }
-      });
-    } else {
-      stdout.write('Exit\n');
-      process.exit(0);
-    }
+  if (data.toString() !== 'exit\r\n') {
+    fs.appendFile(path.resolve(__dirname, fileName), data, (err) => {
+      if (err) {
+        stdout.write(err + '\n');
+        process.exit(-1);
+      }
+    });
   } else {
-    process.exit(64);
+    stdout.write('Exit\n');
+    process.exit(0);
   }
 });
 process.on('exit', (code) => {
